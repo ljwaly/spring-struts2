@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+
+
+
+	<include file="json-struts.xml" />
+
+	<!-- 	
+		package:包，以前包的作用：用来区分同名的文件，在不同的包内，可以存放同名的java类
+		                   而当前package的作用跟java中包的作用是一样的	
+		        name：包的别名  
+		extends:继承    ，当前这个包继承父包  ,在正常情况下，struts2中包必须继承struts-default  
+		namespace:其实是你的访问路径，与访问路径相关    
+	 -->	
+
+
+	<package name="default" extends="struts-default" namespace="/">
+		
+		
+		<!-- 配置Action 
+		     name:Action的别名
+		     class：当前Action对应的完整的包路径
+		 -->
+		<action name="hello" class="com.ljw.action.HelloAction">
+			<!-- 配置结果集 -->
+			<result name="success">/publish/abc.jsp</result>
+			<result name="error">/publish/efg.jsp</result>
+			<result name="woqu">/publish/100.jpg</result>
+		</action>
+		
+		<action name="io" class="com.ljw.action.StreamAction"
+			method="streamIO" >
+			<!-- 配置结果集 -->
+			
+			<result name="success" type="stream">
+				<param name="contentType">application/x-gzip</param>
+				<param name="inputName">downloadFile</param>
+				<param name="contentDisposition">attachment;fileName="${fileName}"</param>
+				<param name="bufferSize">1024</param>
+			</result>
+
+		</action>
+	
+	
+	</package>
+
+	
+
+
+	<!-- 配置package
+		     name:  package的别名
+		     extends：所有package都需要继承struts-default
+		     namespace：路径区分在访问时需要添加此路径:项目地址/ljw/Action的别名访问
+	-->
+
+	<package name="ljwPackage" extends="struts-default" namespace="/ljw/doAction">
+	
+		<!-- 配置Action 
+		     name:Action的别名
+		     class：当前Action对应的完整的包路径
+		     method：执行自己的Action内部对应的方法，可以自己随便命名，保证类内部方法名字和此名字一致即可
+		 -->
+		<action name="doAction" 
+				class="com.ljw.action.LijinwuAction" 
+				method="doAction">
+			<!-- 配置结果集 -->
+			<result name="success">/publish/abc.jsp</result>
+			<result name="error">/publish/efg.jsp</result>
+		</action>
+	
+	
+	</package>
+</struts>

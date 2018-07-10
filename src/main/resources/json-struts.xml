@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+
+	<!-- 声明多重命名空间 -->
+<!-- 	<package name="baseTestAction" extends="struts-default" namespace="/base/test"> -->
+	<package name="baseTestAction" extends="struts-default" namespace="/test">	
+		
+		<!-- 创建一个json类型的返回数据 -->
+		<result-types>
+			<result-type name="json" class="org.apache.struts2.json.JSONResult" />
+		</result-types>
+		
+		
+		<action name="postAndJson"
+			class="com.ljw.action.sdk.BaseAction"
+			method="postAndJson">
+			<result type="json">
+				<param name="root">resultMap</param>
+			</result>
+		</action>
+	
+		<action name="sleep"
+			class="com.ljw.action.sdk.SleepAction"
+			method="testSleep">
+			<result type="json">
+				<param name="root">resultMap</param>
+			</result>
+		</action>
+		
+		<action name="sleep2"
+			class="com.ljw.action.sdk.SleepAction"
+			method="testSleep1">
+			<result type="json">
+				<param name="root">resultMap</param>
+			</result>
+		</action>
+	
+	</package>
+</struts>

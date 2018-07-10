@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd 
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd 
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd ">
+
+	<!--log -->
+	<aop:aspectj-autoproxy />
+
+
+	<!-- 营销平台log日志 -->
+	<bean id="marketInterceptor" class="com.ljw.log.MarketInterceptor">
+	</bean>
+
+	<bean id="loginService" class="com.ljw.service.LoginService">
+	</bean>
+
+	<!-- xml配置类，获取applicationContext -->
+	<bean id="appContextUtil" class="com.ljw.util.AppContextUtil" />
+
+	<!-- http配置类 -->
+	<bean id="httpOtherUtil" class="com.ljw.http.HttpOtherUtil" />
+
+	<!-- http配置类 -->
+	<bean id="testInterface" class="com.ljw.service.TestInterface" />
+
+	<bean id="testInterface2" class="com.ljw.service.TestInterface2" />
+
+
+	<!-- =================== 定时任务：配置调度程序quartz ，其中配置JobDetail有两种方式 =========================== -->
+
+	<!-- 方式二：使用MethodInvokingJobDetailFactoryBean，任务类可以不实现Job接口，通过targetMethod指定调用方法 -->
+	<!-- 定义目标bean和bean中的方法 -->
+
+	<bean id="ljwJob" class="com.ljw.job.LjwJob">
+		<property name="nameKey" value="ljw-jobTest-go!"></property>
+	</bean>
+	<bean id="ljwSpringQtzJobMethod"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+
+		<!-- 目标job的bean -->
+		<property name="targetObject">
+			<ref bean="ljwJob" />
+		</property>
+
+		<!-- 要执行的方法名称 -->
+		<property name="targetMethod">
+			<value>executeMyJob</value>
+		</property>
+
+	<!-- 
+		指定concurrent设为false，多个job不会并发运行，
+		第二个job（同一个job，即此job第二次触发时，第一次还没有结束任务，将等待）将不会在第一个job完成之前开始 
+	-->
+		<property name="concurrent">
+			<value>false</value>
+		</property>
+	</bean>
+
+	<!-- ======================== 调度触发器 ======================== -->
+	<bean id="ljwCronTriggerBean"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="ljwSpringQtzJobMethod"></property>
+		<property name="cronExpression" value="0/5 * * * * ?"></property>
+	</bean>
+	
+	<!-- ======================== 总调度工厂 ======================== -->
+	<bean id="springJobSchedulerFactoryBean"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="ljwCronTriggerBean" />
+				<!--  <ref bean="ljwCronTriggerBean1" />
+				<ref bean="ljwCronTriggerBean2" />
+				<ref bean="ljwCronTriggerBean3" />
+				<ref bean="ljwCronTriggerBean4" />-->
+			</list>
+		</property>
+	</bean>
+
+</beans>
